@@ -109,9 +109,12 @@ def calculate_prevalence(infected_list, recovered_list):
 
 ########################################################################################################################
 
-def calculate_invasion_time (infected_list):
+def calculate_invasion_time (infected_list, num_modules):
     """returns invasion time in each module sorted in order of 1st module invaded to last"""
-    invasion_time=[find_invasion_minimum(infected_list[x:x+1000]) for x in range(0,10000,1000)]
+    
+    N= len(infected_list)
+    modsize = N/num_modules
+    invasion_time=[find_invasion_minimum(infected_list[x:x+modsize]) for x in range(0, N,modsize)]
     invasion_time_sort=sorted(invasion_time)
     #remove all the invasion time when module was not infected
     invasion_time_sort = [num for num in invasion_time_sort if num!=10000]
@@ -205,12 +208,13 @@ def find_minimum(sequence):
     
 ########################################################################################################################
 
-def is_epidemic(infected_list, num_modules):
+def is_epidemic(infected_list):
     """an infection spread is considered an epidemic if at least 10% individuals in 1 modules are infected"""
-    N = len(infected_list)
-    modsize = N/num_modules
-    cutoff_size = 0.1*modsize
+
+    cutoff_size = 200
     is_epidemic_magnitude=len([x for x in infected_list if x>0])>= cutoff_size #tests if minimum 100 indivduals are infected
+    
+    """
     is_epidemic_scale=False
     
     if is_epidemic_magnitude==True:
@@ -219,7 +223,8 @@ def is_epidemic(infected_list, num_modules):
         is_epidemic_scale=infected_modules>=1 #i.e minimum infected modules is atleast 1
     
     return is_epidemic_magnitude and is_epidemic_scale
-    #return is_epidemic_magnitude 
+    """
+    return is_epidemic_magnitude 
 ########################################################################################################################
 
 def synced_epidemic_duration(infected_list, recovered_list):
